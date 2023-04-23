@@ -1,10 +1,19 @@
 module.exports = {
-  packagerConfig: {},
+  packagerConfig: {
+    "protocols": [
+      {
+        "name": "Electron Fiddle",
+        "schemes": ["gmd-electron-fiddle"]
+      }
+    ]
+  },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        "mimeType": ["x-scheme-handler/gmd-electron-fiddle"]
+      },
     },
     {
       name: '@electron-forge/maker-zip',

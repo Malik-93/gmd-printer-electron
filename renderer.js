@@ -1,14 +1,25 @@
-let { remote } = require("electron");
+let { remote, protocol } = require("electron");
 // console.log(process.versions.electron);
 
 const { PosPrinter, } = remote.require("electron-pos-printer");
 // const {PosPrinter} = require("electron-pos-printer"); //dont work in production (??)
-
 const path = require("path");
+// const ws_img = require(path.join(__dirname, './assets/ws_special.png'));
+// protocol.interceptFileProtocol('resource', (req, callback) => {
+
+// })
 
 let webContents = remote.getCurrentWebContents();
 let printers = webContents.getPrinters().filter(p => p.name.toLowerCase().includes("rollo")); //list the printers
 console.log(printers);
+const DATE_TIME = `${new Intl.DateTimeFormat('en-US', {
+  year: '2-digit',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+}).format(Date.now())}`
 
 printers.map((item, index) => {
   //write in the screen the printers for choose
@@ -31,22 +42,32 @@ function print(preview = false, index = 0) {
       printerName: printerName, // printerName: string, check it at webContent.getPrinters()
       timeOutPerLine: 400,
       silent: true,
-      pageSize: { height: window.screen.height * .5, width: window.screen.width * .5 }  // page size
+      pageSize: { height: window.screen.height * .4 }  // page size
 
     };
 
-    
+
     const data = [
       {
+        type: 'text',                                       // 'text' | 'barCode' | 'qrCode' | 'image' | 'table
+        value: 'Sample Title',
+        style: { fontWeight: "500", textAlign: 'center', fontSize: "18px" }
+      },
+      {
+        type: 'text',                                       // 'text' | 'barCode' | 'qrCode' | 'image' | 'table
+        value: '0.9$',
+        style: { fontWeight: "500", textAlign: 'center', fontSize: "18px" }
+      },
+      {
         type: 'image',
-        url: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/279fb0d0-b666-4cda-aec9-d53b8dd2853e/everyday-plus-cushioned-training-ankle-socks-6-pairs-xql9Hn.png',     // file path
+        url: path.resolve(__dirname, `./assets/ws_special.png`),     // file path
         position: 'center',                                  // position of image: 'left' | 'center' | 'right'
         width: '250px',                                           // width of image in px; default: auto
         height: '250px',                                          // width of image in px; default: 50 or '50px'
       },
       {
         type: 'text',                                       // 'text' | 'barCode' | 'qrCode' | 'image' | 'table
-        value: 'SAMPLE HEADING',
+        value: `${DATE_TIME.split(',')[0]} ${DATE_TIME.split(',')[1]}`,
         style: { fontWeight: "500", textAlign: 'center', fontSize: "18px" }
       },
       {
